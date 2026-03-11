@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
@@ -24,54 +24,84 @@ import {
   BrainCircuit
 } from 'lucide-react';
 import Link from 'next/link';
-import { faqs, questionBank } from '@/lib/home-data';
+
+// --- Data for Interactive Sections ---
+
+const sampleQuestions = [
+  {
+    subject: "Mathematics",
+    topic: "Calculus",
+    question: "The value of the integral ∫(0 to π/2) log(tan x) dx is:",
+    options: ["π/2", "π", "0", "1"],
+    correct: 2, // Index 2 -> "0"
+    explanation: "Using the definite integral property ∫(0 to a) f(x)dx = ∫(0 to a) f(a-x)dx. Let I = ∫log(tan x)dx. Then I = ∫log(tan(π/2 - x))dx = ∫log(cot x)dx. Adding both equations gives 2I = ∫log(tan x * cot x)dx = ∫log(1)dx = 0. Therefore, I = 0."
+  },
+  {
+    subject: "English",
+    topic: "Vocabulary",
+    question: "Choose the word which is most nearly OPPOSITE in meaning to 'EPHEMERAL':",
+    options: ["Transient", "Permanent", "Pungent", "Eccentric"],
+    correct: 1,
+    explanation: "'Ephemeral' means lasting for a very short time. Therefore, its exact opposite is 'Permanent', which means lasting or intended to last indefinitely."
+  },
+  {
+    subject: "Civil Eng.",
+    topic: "Structural Analysis",
+    question: "The maximum bending moment for a simply supported beam of span 'L' carrying a uniformly distributed load 'w' per unit length is:",
+    options: ["wL²/4", "wL²/8", "wL²/12", "wL²/2"],
+    correct: 1,
+    explanation: "For a simply supported beam with a UDL, the maximum bending moment occurs at the center of the span and is calculated using the formula M_max = wL²/8."
+  },
+  {
+    subject: "Computer Eng.",
+    topic: "Data Structures",
+    question: "Which data structure is primarily used for implementing a breadth-first search (BFS) on a graph?",
+    options: ["Stack", "Queue", "Priority Queue", "Linked List"],
+    correct: 1,
+    explanation: "BFS explores the neighbor nodes first, before moving to the next level neighbors. A Queue (FIFO) perfectly models this behavior, ensuring nodes are visited in the order they were discovered."
+  }
+];
+
+const faqs = [
+  {
+    q: "Is this course suitable for all engineering streams?",
+    a: "Yes! We cover the common syllabus (Mathematics and English) extensively, and provide specialized modules for major streams including Civil, Computer, Electrical, Electronics, and Mechanical Engineering."
+  },
+  {
+    q: "How similar are the mock tests to the actual IOE CBT?",
+    a: "Our mock test platform is designed to perfectly mimic the IOE Computer Based Test (CBT) interface. This helps you get familiar with the navigation, timer, and pressure of the real exam."
+  },
+  {
+    q: "Can I access the materials on my phone?",
+    a: "Absolutely. Our platform is fully responsive. You can watch video lectures, read notes, and even take practice quizzes on your mobile device while commuting."
+  },
+  {
+    q: "What if I have doubts while studying?",
+    a: "We have a dedicated community forum and Q&A section under every video. Our expert instructors and peer community typically resolve doubts within a few hours."
+  }
+];
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const subjects = useMemo(() => ['All Subjects', ...new Set(questionBank.map((q) => q.subject))], []);
-
-  // State for Quiz
-  const [activeSubject, setActiveSubject] = useState('All Subjects');
-  const filteredQuestions = useMemo(
-    () =>
-      activeSubject === 'All Subjects'
-        ? questionBank
-        : questionBank.filter((q) => q.subject === activeSubject),
-    [activeSubject]
-  );
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  
+  // State for Sample Questions
+  const [activeSubject, setActiveSubject] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
-  const [answeredCount, setAnsweredCount] = useState(0);
-  const [correctCount, setCorrectCount] = useState(0);
 
   // State for FAQs
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const activeQuestion = filteredQuestions[activeQuestionIndex] ?? questionBank[0];
-
-  const handleSubjectChange = (subject: string) => {
-    setActiveSubject(subject);
-    setActiveQuestionIndex(0);
+  const handleSubjectChange = (index: number) => {
+    setActiveSubject(index);
     setSelectedOption(null);
     setIsAnswerChecked(false);
   };
 
   const handleCheckAnswer = () => {
-    if (selectedOption !== null && !isAnswerChecked) {
+    if (selectedOption !== null) {
       setIsAnswerChecked(true);
-      setAnsweredCount((prev) => prev + 1);
-      if (selectedOption === activeQuestion.correct) {
-        setCorrectCount((prev) => prev + 1);
-      }
     }
-  };
-
-  const handleNextQuestion = () => {
-    setActiveQuestionIndex((prev) => (prev + 1) % filteredQuestions.length);
-    setSelectedOption(null);
-    setIsAnswerChecked(false);
   };
 
   return (
@@ -95,8 +125,8 @@ export default function Home() {
               <Link href="#study-plans" className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">Study Plans</Link>
               <Link href="#pricing" className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">Pricing</Link>
               <div className="flex items-center gap-4 ml-4 pl-4 border-l border-slate-200">
-                <Link href="#practice" className="text-sm font-semibold text-slate-900 hover:text-indigo-600 transition-colors">Log in</Link>
-                <Link href="#pricing" className="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-indigo-600 transition-all shadow-sm hover:shadow-indigo-200 hover:-translate-y-0.5">
+                <Link href="/login" className="text-sm font-semibold text-slate-900 hover:text-indigo-600 transition-colors">Log in</Link>
+                <Link href="/signup" className="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-indigo-600 transition-all shadow-sm hover:shadow-indigo-200 hover:-translate-y-0.5">
                   Get Started
                 </Link>
               </div>
@@ -127,8 +157,8 @@ export default function Home() {
                 <Link href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="block text-base font-semibold text-slate-600">Pricing</Link>
                 <hr className="border-slate-100" />
                 <div className="grid grid-cols-2 gap-4 pt-2">
-                  <Link href="#practice" className="flex items-center justify-center text-base font-semibold text-slate-900 bg-slate-100 py-3 rounded-xl">Log in</Link>
-                  <Link href="#pricing" className="flex items-center justify-center text-base font-semibold text-white bg-indigo-600 py-3 rounded-xl shadow-sm">Get Started</Link>
+                  <Link href="/login" className="flex items-center justify-center text-base font-semibold text-slate-900 bg-slate-100 py-3 rounded-xl">Log in</Link>
+                  <Link href="/signup" className="flex items-center justify-center text-base font-semibold text-white bg-indigo-600 py-3 rounded-xl shadow-sm">Get Started</Link>
                 </div>
               </div>
             </motion.div>
@@ -357,21 +387,21 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col gap-3">
-                  {subjects.map((subject) => (
+                  {sampleQuestions.map((sq, idx) => (
                     <button
-                      key={subject}
-                      onClick={() => handleSubjectChange(subject)}
+                      key={idx}
+                      onClick={() => handleSubjectChange(idx)}
                       className={`text-left px-6 py-4 rounded-2xl font-semibold transition-all flex items-center justify-between ${
-                        activeSubject === subject
+                        activeSubject === idx 
                           ? 'bg-slate-900 text-white shadow-md' 
                           : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <BrainCircuit className={`h-5 w-5 ${activeSubject === subject ? 'text-indigo-400' : 'text-slate-400'}`} />
-                        {subject}
+                        <BrainCircuit className={`h-5 w-5 ${activeSubject === idx ? 'text-indigo-400' : 'text-slate-400'}`} />
+                        {sq.subject}
                       </div>
-                      {activeSubject === subject && <ArrowRight className="h-5 w-5 text-indigo-400" />}
+                      {activeSubject === idx && <ArrowRight className="h-5 w-5 text-indigo-400" />}
                     </button>
                   ))}
                 </div>
@@ -383,26 +413,21 @@ export default function Home() {
                     {/* Quiz Header */}
                     <div className="border-b border-slate-100 px-6 py-4 flex justify-between items-center bg-slate-50/50">
                       <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider">
-                        {activeQuestion.topic}
+                        {sampleQuestions[activeSubject].topic}
                       </span>
                       <span className="text-sm font-medium text-slate-400 flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {activeQuestionIndex + 1}/{filteredQuestions.length}
+                        <Clock className="h-4 w-4" /> 01:30
                       </span>
                     </div>
                     
                     {/* Question Content */}
                     <div className="p-6 md:p-8">
-                      <div className="flex items-center justify-between gap-4 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-6 text-sm">
-                        <span className="font-semibold text-slate-600">Session score</span>
-                        <span className="font-bold text-slate-900">{correctCount}/{answeredCount || 0} correct</span>
-                      </div>
                       <h3 className="text-xl font-semibold text-slate-900 mb-8 leading-relaxed">
-                        {activeQuestion.question}
+                        {sampleQuestions[activeSubject].question}
                       </h3>
                       
                       <div className="space-y-3 mb-8">
-                        {activeQuestion.options.map((opt, idx) => {
+                        {sampleQuestions[activeSubject].options.map((opt, idx) => {
                           let optionClass = "border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-slate-700";
                           
                           if (selectedOption === idx) {
@@ -410,7 +435,7 @@ export default function Home() {
                           }
                           
                           if (isAnswerChecked) {
-                            if (idx === activeQuestion.correct) {
+                            if (idx === sampleQuestions[activeSubject].correct) {
                               optionClass = "border-emerald-500 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-500";
                             } else if (selectedOption === idx) {
                               optionClass = "border-red-500 bg-red-50 text-red-900 ring-1 ring-red-500";
@@ -427,10 +452,10 @@ export default function Home() {
                               className={`w-full text-left px-6 py-4 rounded-xl border-2 font-medium transition-all flex items-center justify-between ${optionClass}`}
                             >
                               <span><span className="mr-3 font-bold opacity-50">{String.fromCharCode(65 + idx)}.</span> {opt}</span>
-                              {isAnswerChecked && idx === activeQuestion.correct && (
+                              {isAnswerChecked && idx === sampleQuestions[activeSubject].correct && (
                                 <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                               )}
-                              {isAnswerChecked && selectedOption === idx && idx !== activeQuestion.correct && (
+                              {isAnswerChecked && selectedOption === idx && idx !== sampleQuestions[activeSubject].correct && (
                                 <X className="h-5 w-5 text-red-600" />
                               )}
                             </button>
@@ -464,15 +489,8 @@ export default function Home() {
                               <div>
                                 <h4 className="font-bold text-indigo-900 mb-2">Explanation</h4>
                                 <p className="text-indigo-800/80 leading-relaxed text-sm">
-                                  {activeQuestion.explanation}
+                                  {sampleQuestions[activeSubject].explanation}
                                 </p>
-                                <button
-                                  onClick={handleNextQuestion}
-                                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
-                                >
-                                  Next Question
-                                  <ArrowRight className="h-4 w-4" />
-                                </button>
                               </div>
                             </div>
                           </motion.div>
