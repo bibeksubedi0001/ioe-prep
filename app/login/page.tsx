@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, isAuthenticated } from '@/lib/auth';
 import { Eye, EyeOff, LogIn, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -110,6 +111,13 @@ export default function LoginPage() {
               )}
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
+
+            <p className="text-center text-sm text-slate-500 pt-1">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="text-blue-600 font-semibold hover:underline">
+                Create one
+              </Link>
+            </p>
           </form>
         </div>
       </div>

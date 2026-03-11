@@ -96,8 +96,8 @@ export default function Home() {
               <Link href="#study-plans" className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">Study Plans</Link>
               <Link href="#pricing" className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors">Pricing</Link>
               <div className="flex items-center gap-4 ml-4 pl-4 border-l border-slate-200">
-                <Link href="#practice" className="text-sm font-semibold text-slate-900 hover:text-indigo-600 transition-colors">Log in</Link>
-                <Link href="#pricing" className="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-indigo-600 transition-all shadow-sm hover:shadow-indigo-200 hover:-translate-y-0.5">
+                <Link href="/login" className="text-sm font-semibold text-slate-900 hover:text-indigo-600 transition-colors">Log in</Link>
+                <Link href="/signup" className="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-indigo-600 transition-all shadow-sm hover:shadow-indigo-200 hover:-translate-y-0.5">
                   Get Started
                 </Link>
               </div>
@@ -128,8 +128,8 @@ export default function Home() {
                 <Link href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="block text-base font-semibold text-slate-600">Pricing</Link>
                 <hr className="border-slate-100" />
                 <div className="grid grid-cols-2 gap-4 pt-2">
-                  <Link href="#practice" className="flex items-center justify-center text-base font-semibold text-slate-900 bg-slate-100 py-3 rounded-xl">Log in</Link>
-                  <Link href="#pricing" className="flex items-center justify-center text-base font-semibold text-white bg-indigo-600 py-3 rounded-xl shadow-sm">Get Started</Link>
+                  <Link href="/login" className="flex items-center justify-center text-base font-semibold text-slate-900 bg-slate-100 py-3 rounded-xl">Log in</Link>
+                  <Link href="/signup" className="flex items-center justify-center text-base font-semibold text-white bg-indigo-600 py-3 rounded-xl shadow-sm">Get Started</Link>
                 </div>
               </div>
             </motion.div>
@@ -719,9 +719,9 @@ export default function Home() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-6">Ready to secure your seat?</h2>
             <p className="text-xl text-indigo-100 mb-10">Join thousands of students who have transformed their preparation with IOEPrep.</p>
-            <button className="px-10 py-5 bg-white text-indigo-600 rounded-full font-bold text-xl hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
+            <Link href="/signup" className="inline-block px-10 py-5 bg-white text-indigo-600 rounded-full font-bold text-xl hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
               Create Free Account
-            </button>
+            </Link>
           </div>
         </section>
       </main>
