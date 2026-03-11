@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages (ioe-prep)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ioe-prep repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for GitHub Pages
+        run: npm run build
+        env:
+          GITHUB_PAGES: true
+
+      # next export puts files into ./out — add .nojekyll so GitHub Pages
+      # does not skip the _next/ folder (which starts with an underscore)
+      - name: Add .nojekyll to build output
+        run: touch out/.nojekyll
+
+      - name: Checkout main portfolio repo
+        uses: actions/checkout@v4
+        with:
+          repository: bibeksubedi0001/bibeksubedi0001.github.io
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: portfolio-repo
+
+      - name: Sync build output → portfolio-repo/ioe-prep/
+        run: |
+          # Remove the old ioe-prep folder and replace with fresh build
+          rm -rf portfolio-repo/ioe-prep
+          cp -r out portfolio-repo/ioe-prep
+
+      - name: Commit and push to main portfolio repo
+        working-directory: portfolio-repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ioe-prep/
+          # Only commit if there are actual changes
+          git diff --cached --quiet || git commit -m "chore: deploy ioe-prep build [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git push

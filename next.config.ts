@@ -1,4 +1,8 @@
 import type {NextConfig} from 'next';
+import path from 'path';
+
+// Set to true when building for GitHub Pages deployment
+const isGithubPages = process.env.GITHUB_PAGES === 'true';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -8,29 +12,31 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  
-  // --- ADDED FOR GITHUB PAGES ---
-  basePath: '/ioe-prep',
-  output: 'export', 
-  // ------------------------------
+
+  // Prevents Next.js from traversing parent directories for workspace root
+  outputFileTracingRoot: path.join(__dirname),
+
+  // GitHub Pages static export (only when building for deployment)
+  ...(isGithubPages && {
+    basePath: '/ioe-prep',
+    output: 'export',
+    trailingSlash: true, // generates page/index.html so GH Pages serves nested routes
+  }),
 
   images: {
-    // unoptimized MUST be true for output: 'export' to work
-    unoptimized: true, 
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', 
+        pathname: '/**',
       },
     ],
   },
-  
+
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {
-    // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modify—file watching is disabled to prevent flickering during agent edits.
     if (dev && process.env.DISABLE_HMR === 'true') {
       config.watchOptions = {
         ignored: /.*/,
