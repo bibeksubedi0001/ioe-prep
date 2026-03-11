@@ -49,6 +49,8 @@ jobs:
           # Remove the old ioe-prep folder and replace with fresh build
           rm -rf portfolio-repo/ioe-prep
           cp -r out portfolio-repo/ioe-prep
+          # Ensure .nojekyll exists at repo root so GitHub Pages never strips _next/
+          touch portfolio-repo/.nojekyll
 
       - name: Commit and push to main portfolio repo
         working-directory: portfolio-repo
